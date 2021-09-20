@@ -1,59 +1,86 @@
-import React, { useRef, useState } from "react";
-import { View, Text, StyleSheet, Button, Touchable, TouchableOpacity, Alert } from "react-native";
-import Card from "../components/Card";
+import React, { useState,useRef,useEffect } from "react";
+import { View, Text, StyleSheet, Button, Touchable, TouchableOpacity,Alert } from "react-native";
 import NumberContainer from "../components/NumberContainer";
+import Card from "../components/Card";
+import Color from "../constant/Color";
+import MainButton from "../components/MainButton";
 
-const generadeRanndomNumber = (min, max, exclude) => {
-    min = Math.ceil(min)
-    max = Math.floor(max)
+
+const genereadeRandomNumber = (min, max, exclude) => {
+
+    min = Math.ceil(min);
+    max = Math.floor(max);
     const rndNum = Math.floor(Math.random() * (max - min)) + min;
+
     if (rndNum === exclude) {
-        return generadeRanndomNumber(min, max, exclude)
+        return genereadeRandomNumber(min, max, exclude)
     } else {
         return rndNum;
+
     }
+}
+
+
+
+
+
+const GameScrren = (props) => {
+
+    const [currentGuess, setCurrentGuess] = useState(
+        genereadeRandomNumber(1, 100, props.userChoice)
+    )
+    const [round,setRound] = useState(0);
+    const currentLow = useRef(1)
+    const currentHeight = useRef(100)
+    
+
+    useEffect (()=>{
+        if(currentGuess===props.userChoice){
+            props.gameOver(round)
+        }
+    },[currentGuess,props]
+    
+    )
+
+const guestHandler = (direction)=>{
+   
+
+    if (
+        (direction === "lower" && currentGuess < props.userChoice) ||
+        (direction === "greater" && currentGuess > props.userChoice)
+      ) {
+        Alert.alert("Don't lie!", "You know that is wrong...", [
+          { text: "Sorry!", style: "cancel" },
+        ]);
+        return;
+      }
+
+       if(direction==='lower'){
+           currentHeight.current = currentGuess;
+       }else{
+           currentLow.current = currentGuess;
+       }
+
+        const nextCurrentGuess = genereadeRandomNumber( currentHeight.current,currentLow.current,currentGuess );
+        setCurrentGuess(nextCurrentGuess)
+        setRound(round+1);
 
 
 }
-
-const GameScreen = (props) => {
-    const [currentGuess, setCurrentGuess] = useState(
-        generadeRanndomNumber(1, 100, props.userChoice)
-    )
-    const highRef = useRef(100)
-    const lowRef = useRef(1);
-
-
-    const lowerGreaterHandler = (input) => {
-       
-
-        if ((input === 'Lower' && props.userChoice > currentGuess) ||
-            (input === 'Upper' && props.userChoice < currentGuess)) {
-            Alert.alert(
-                "Don't lie",
-                "You know it is wrong",
-                [{ text: 'Cancel' }]
-            )
-            return;
-        }
-
-
-        if (input === 'Lower') {
-            highRef.current = currentGuess;
-        } else {
-            lowRef.current = currentGuess;
-        }
-        const nextCurrentGuess = generadeRanndomNumber(highRef.current, lowRef.current, props.userChoice);
-        setCurrentGuess(nextCurrentGuess);
-    }
 
     return (
         <View style={styles.screen}>
             <Text>Opponent Guess</Text>
             <NumberContainer>{currentGuess}</NumberContainer>
             <Card style={styles.buttonContainer}>
-                <TouchableOpacity onPress={() => lowerGreaterHandler("Lower")}><Text style={styles.buttonColorPrimary}>Lower</Text></TouchableOpacity>
-                <TouchableOpacity onPress={() => lowerGreaterHandler("Upper")}><Text style={styles.buttonColorAccent}>Greater</Text></TouchableOpacity>
+                <MainButton onPress={()=>guestHandler("lower")}>
+                    Lower
+                </MainButton>
+                <MainButton onPress={()=>guestHandler("greater")}>
+                    Greater
+                </MainButton>
+               
+
             </Card>
         </View>
     )
@@ -62,25 +89,21 @@ const GameScreen = (props) => {
 const styles = StyleSheet.create(
     {
         screen: {
-            flex: 1,
+           width:'100%',
             padding: 10,
-            alignItems: "center",
+            alignItems: 'center'
         },
-
         buttonContainer: {
-            flexDirection: 'row',
-            width: '80%',
-            height: 100,
-            justifyContent: 'space-around'
+            
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 20,
+            width: 300,
+            height:100,
+            maxWidth: "80%",
 
-        },
-        buttonColorPrimary: {
-            color: '#c717fc'
-        },
-        buttonColorAccent: {
-            color: '#f7287b',
-        },
+        }
     }
 )
 
-export default GameScreen;
+export default GameScrren;

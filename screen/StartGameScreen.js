@@ -4,6 +4,8 @@ import Card from '../components/Card'
 import Color from '../constant/Color'
 import Input from "../components/Input";
 import NumberContainer from "../components/NumberContainer";
+import MainButton from "../components/MainButton";
+import DefaultSyles from "../constant/DefaultSyles";
 
 const StartGameScreen = (props) => {
     const [enterValue, setEnterValue] = useState("");
@@ -36,9 +38,8 @@ const StartGameScreen = (props) => {
         conifrmedOutput=(<Card style={styles.summaryContainer}>
             <Text>You selected</Text>
             <NumberContainer>{selectNumber}</NumberContainer>
-            <TouchableOpacity onPress={() =>props.startGameHandler(selectNumber)}>
-                <Text style={styles.buttonColorPrimary}>Start Game</Text>
-            </TouchableOpacity>
+            <MainButton onPress={() =>props.startGameHandler(selectNumber)}>Start Game</MainButton>
+            
             
         </Card>
         );
@@ -47,9 +48,9 @@ const StartGameScreen = (props) => {
     return (
         <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.screen}>
-                <Text>Start a new game</Text>
+                <Text style={DefaultSyles.bodyTexT}>Start a new game</Text>
                 <Card>
-                    <Text>Select A Number</Text>
+                    <Text style={DefaultSyles.title}>Select A Number</Text>
                     <Input
                         style={styles.input}
                         blurOnSubmit
@@ -62,8 +63,9 @@ const StartGameScreen = (props) => {
 
                     />
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity onPress={reset}><Text style={styles.buttonColorAccent}>Reset</Text></TouchableOpacity>
-                        <TouchableOpacity onPress={confirmInputHandler} ><Text style={styles.buttonColorPrimary}>Confirm</Text></TouchableOpacity>
+                        <MainButton onPress={reset}>Reset</MainButton>
+                        <MainButton onPress={confirmInputHandler}>Confirm</MainButton>
+                       
 
                     </View>
                 </Card>
